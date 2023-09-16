@@ -2,6 +2,7 @@ import json
 import requests
 import mysql.connector
 import sys
+from decouple import config
 
 # Check if a JSON file name was provided as a command-line argument
 if len(sys.argv) != 2:
@@ -19,11 +20,7 @@ except FileNotFoundError:
     sys.exit(1)
 
 # Define a list of offer names to process
-offer_names_to_process = [
-    "AmazonS3",
-    "AmazonRDS",
-    # Add more offer names here as needed
-]
+offer_names_to_process = config('OFFER_NAMES_TO_PROCESS', cast=lambda v: [s.strip() for s in v.split(',')])
 
 
 # Function to create the database and tables
@@ -135,10 +132,9 @@ def process_offer(offer_name, offer_details, cursor):
 
 # Define MySQL database connection parameters
 db_config = {
-    'host': '10.22.0.140',
-    'user': 'aws',
-    'password': 'aws',
-    'database': 'awsdb',
+    'host': config('DB_HOST'),
+    'user': config('DB_USER'),
+    'password': config('DB_PASSWORD'),
 }
 
 # Create a MySQL database connection
@@ -153,9 +149,15 @@ try:
 
     print("Processing offers...")
     # Iterate over the offers in the JSON data
-    for offer_name, offer_details in data['offers'].items():
-        if offer_name in offer_names_to_process:
+    if offer_names_to_process == ['*']:
+        for offer_name, offer_details in data['offers'].items():
             process_offer(offer_name, offer_details, cursor)
+    else:
+        for offer_name in offer_names_to_process:
+            if offer_name in data['offers']:
+                process_offer(offer_name, data['offers'][offer_name], cursor)
+            else:
+                print(f"Offer '{offer_name}' not found in JSON data.")
 
     # Commit changes and close the database connection
     connection.commit()
