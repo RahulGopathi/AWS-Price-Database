@@ -4,11 +4,13 @@ from sqlalchemy import Column, Integer, String, JSON
 # Create a SQLAlchemy Base model
 Base = declarative_base()
 
+
 # Define database models
 class ProductFamily(Base):
     __tablename__ = "product_family"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), unique=True, index=True)
+
 
 class Product(Base):
     __tablename__ = "product"
@@ -19,6 +21,7 @@ class Product(Base):
     location = Column(String(255))
     region_code = Column(String(255))
     product_attributes = Column(JSON)
+
 
 class Price(Base):
     __tablename__ = "price"

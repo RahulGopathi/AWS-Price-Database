@@ -1,0 +1,3 @@
+[flake8]
+exclude = .git,__pycache__,env,venv,.gitignore,load-data/index.json,api/*/__pycache__
+max-line-length = 140

@@ -4,6 +4,7 @@ from api.models import ProductFamily
 
 router = APIRouter()
 
+
 # Route to get all product families
 @router.get("/product-families/")
 async def get_product_families(skip: int = Query(0, description="Skip N product families", ge=0),

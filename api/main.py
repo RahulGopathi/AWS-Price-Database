@@ -1,6 +1,5 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from api.models import ProductFamily, Product, Price
 from api.routers import product_family, services, products, prices
 
 # Create a FastAPI instance
@@ -11,6 +10,7 @@ api.include_router(product_family.router, prefix="/api")
 api.include_router(services.router, prefix="/api")
 api.include_router(products.router, prefix="/api")
 api.include_router(prices.router, prefix="/api")
+
 
 # Custom exception handler to return a 404 response
 @api.exception_handler(HTTPException)

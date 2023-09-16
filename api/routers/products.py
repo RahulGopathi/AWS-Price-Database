@@ -4,6 +4,7 @@ from api.models import Product
 
 router = APIRouter()
 
+
 # Route to get all products of a particular service
 @router.get("/products/{service_code}")
 async def get_products(service_code: str, skip: int = Query(0, ge=0), limit: int = Query(100, le=100000)):

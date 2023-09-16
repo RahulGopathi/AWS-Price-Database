@@ -4,14 +4,16 @@ from api.models import ProductFamily, Product
 
 router = APIRouter()
 
+
 # Route to get all services under a product family
 @router.get("/services/{product_family_name}")
 async def get_services(product_family_name: str, skip: int = Query(0, ge=0), limit: int = Query(100, le=100000)):
     # Query the database for services under the specified product family
     with SessionLocal() as db:
         services = db.query(Product).filter(Product.product_family_id == ProductFamily.id,
-                                             ProductFamily.name == product_family_name).offset(skip).limit(limit).all()
+                                            ProductFamily.name == product_family_name).offset(skip).limit(limit).all()
     return services
+
 
 # Define the route to get all services available in a region
 @router.get("/services/")

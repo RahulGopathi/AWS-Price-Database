@@ -25,6 +25,7 @@ offer_names_to_process = [
     # Add more offer names here as needed
 ]
 
+
 # Function to create the database and tables
 def create_database_and_tables(cursor):
     # Create the 'my_database' database if it doesn't exist
@@ -64,10 +65,11 @@ def create_database_and_tables(cursor):
         )
     """)
 
+
 # Function to process an offer
 def process_offer(offer_name, offer_details, cursor):
     print(f"Processing offer '{offer_name}'...")
-    
+
     current_version_url = offer_details['currentVersionUrl']
 
     # Download the JSON data from the currentVersionUrl
@@ -75,10 +77,10 @@ def process_offer(offer_name, offer_details, cursor):
     response = requests.get('https://pricing.us-east-1.amazonaws.com' + current_version_url)
     offer_data = response.json()
     print(f"Loaded '{offer_name}' JSON data.")
-    
+
     # Initialize variables to track the product family ID and name
     product_family_ids = {}
-    
+
     # Create the Unknown product family if it doesn't exist
     cursor.execute("INSERT INTO product_family (name) VALUES (%s)", ('Unknown',))
     unknown_product_family_id = cursor.lastrowid
@@ -92,13 +94,13 @@ def process_offer(offer_name, offer_details, cursor):
         if not product_family_name:
             product_family_name = 'Unknown'
         product_family_id = product_family_ids.get(product_family_name)
-        
+
         if not product_family_id and product_family_name != '' and product_family_name != 'Unknown':
             # If it doesn't exist, create a new product family
             cursor.execute("INSERT INTO product_family (name) VALUES (%s)", (product_family_name,))
             product_family_id = cursor.lastrowid
             product_family_ids[product_family_name] = product_family_id
-        
+
         # Example: Insert data into the 'product' table
         cursor.execute("""
             INSERT INTO product (product_family_id, sku, service_code, location, region_code, product_attributes)
@@ -111,7 +113,7 @@ def process_offer(offer_name, offer_details, cursor):
             product_details.get('attributes', {}).get('regionCode', product_details.get('attributes', {}).get('fromRegionCode', '')),
             json.dumps(product_details.get('attributes', {})),  # Entire product_details as JSON
         ))
-        
+
         last_added_product_id = cursor.lastrowid
 
         # Example: Insert data into the 'price' table
@@ -143,7 +145,7 @@ db_config = {
 try:
     connection = mysql.connector.connect(**db_config)
     cursor = connection.cursor()
-    
+
     print("MySQL connection established.")
     print("Creating database and tables...")
     create_database_and_tables(cursor)
