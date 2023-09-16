@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from api.routers import product_family, services, products, prices
+from api.utils.customHTTPException import CustomHTTPException
 
 # Create a FastAPI instance
 api = FastAPI()
@@ -13,6 +14,9 @@ api.include_router(prices.router, prefix="/api")
 
 
 # Custom exception handler to return a 404 response
-@api.exception_handler(HTTPException)
-async def not_found_exception_handler(request, exc):
-    return JSONResponse(content={"detail": "Not Found"}, status_code=404)
+@api.exception_handler(CustomHTTPException)
+async def custom_exception_handler(request, exc):
+    if exc.status_code and exc.detail:
+        return JSONResponse(content={"detail": exc.detail}, status_code=exc.status_code)
+    else:
+        return JSONResponse(content={"detail": "Not Found"}, status_code=404)

@@ -25,7 +25,7 @@ offer_names_to_process = config('OFFER_NAMES_TO_PROCESS', cast=lambda v: [s.stri
 
 # Function to create the database and tables
 def create_database_and_tables(cursor):
-    # Create the 'my_database' database if it doesn't exist
+    # Create the 'aws_database' database if it doesn't exist
     cursor.execute("CREATE DATABASE IF NOT EXISTS aws_database")
     cursor.execute("USE aws_database")
 
@@ -98,12 +98,12 @@ def process_offer(offer_name, offer_details, cursor):
             product_family_id = cursor.lastrowid
             product_family_ids[product_family_name] = product_family_id
 
-        # Example: Insert data into the 'product' table
+        # Insert data into the 'product' table
         cursor.execute("""
             INSERT INTO product (product_family_id, sku, service_code, location, region_code, product_attributes)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (
-            product_family_id,  # Use product family ID
+            product_family_id,
             product_details.get('sku', ''),
             product_details.get('attributes', {}).get('servicecode', ''),
             product_details.get('attributes', {}).get('location', product_details.get('attributes', {}).get('fromLocation', '')),
@@ -113,7 +113,7 @@ def process_offer(offer_name, offer_details, cursor):
 
         last_added_product_id = cursor.lastrowid
 
-        # Example: Insert data into the 'price' table
+        # Insert data into the 'price' table
         term_details = offer_data.get('terms', {}).get('OnDemand', {}).get(product_sku, {})
         price_dimensions = term_details.get(list(term_details.keys())[0], {}).get('priceDimensions', {})
         price_info = price_dimensions.get(list(price_dimensions.keys())[0], {})

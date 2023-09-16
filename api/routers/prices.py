@@ -12,7 +12,8 @@ async def get_prices_for_service(service_code: str, skip: int = Query(0, ge=0),
     # Query the Product table to retrieve prices for the specified service
     with SessionLocal() as db:
         query = db.query(Product.id.label("product_id"), Product.sku.label("sku"), Product.location.label("location"),
-                         Product.region_code.label("region_code"), Price.pricePerUnit.label("price"), Price.unit.label("unit"))\
+                         Product.region_code.label("region_code"), Price.pricePerUnit.label("price"),
+                         Price.unit.label("unit"), Price.description.label("description"))\
                 .join(Price, Price.product_id == Product.id)\
                 .filter(Product.service_code == service_code)\
                 .offset(skip)\
@@ -21,6 +22,7 @@ async def get_prices_for_service(service_code: str, skip: int = Query(0, ge=0),
 
         # Convert the query results to a list of dictionaries
         prices = [{"product_id": row.product_id, "sku": row.sku, "location": row.location,
-                   "region_code": row.region_code, "price": row.price, "unit": row.unit} for row in query]
+                   "region_code": row.region_code, "price": row.price, "unit": row.unit,
+                   "price_description": row.description} for row in query]
 
     return prices
