@@ -98,9 +98,9 @@ result_6 = measure_query_execution_time(
     "Know all the products and their prices with a particular product attribute value",
     query_6,
     {
-        "attribute_name": "operation",
-        "service_code": "AmazonS3",
-        "attribute_value": "MRAP-Dtransfer",
+        "attribute_name": "memory",
+        "service_code": "AmazonRDS",
+        "attribute_value": "1024 GiB",
     },
 )
 

@@ -54,7 +54,7 @@ def create_database_and_tables(cursor):
     # Create product_attributes index on the 'product' table
     cursor.execute(
         """
-        CREATE INDEX idx_product_attributes ON product ((CAST(product_attributes->>'$.operation' AS CHAR(255))));
+        CREATE INDEX idx_product_attributes ON product ((CAST(product_attributes->>'$.memory' AS CHAR(255))));
     """
     )
 
