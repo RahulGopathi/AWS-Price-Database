@@ -20,7 +20,8 @@ except FileNotFoundError:
 
 # Define a list of offer names to process
 offer_names_to_process = [
-    "AmazonS3"
+    "AmazonS3",
+    "AmazonRDS",
     # Add more offer names here as needed
 ]
 
@@ -70,8 +71,10 @@ def process_offer(offer_name, offer_details, cursor):
     current_version_url = offer_details['currentVersionUrl']
 
     # Download the JSON data from the currentVersionUrl
+    print(f"Downloading '{offer_name}' JSON data...")
     response = requests.get('https://pricing.us-east-1.amazonaws.com' + current_version_url)
     offer_data = response.json()
+    print(f"Loaded '{offer_name}' JSON data.")
     
     # Initialize variables to track the product family ID and name
     product_family_ids = {}
